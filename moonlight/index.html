@@ -1,0 +1,440 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MoonLight — Roblox Lua Obfuscator</title>
+    <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary-color: #3498db;
+            --secondary-color: #2980b9;
+            --accent-color: #e74c3c;
+            --background-color: #0f172a;
+            --text-color: #e2e8f0;
+            --card-color: #1e293b;
+            --shadow-color: rgba(0, 0, 0, 0.3);
+            --border-color: #334155;
+            --animation-speed: 0.3s;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--background-color);
+            color: var(--text-color);
+            margin: 0;
+            padding: 0;
+            min-height: 100vh;
+            transition: background-color var(--animation-speed), color var(--animation-speed);
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+            animation: fadeIn var(--animation-speed);
+        }
+
+        header h1 {
+            font-size: 2.5rem;
+            margin: 0;
+            color: var(--primary-color);
+            font-weight: 700;
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+        }
+
+        .theme-button {
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            cursor: pointer;
+            transition: transform var(--animation-speed);
+        }
+
+        .theme-button:hover {
+            transform: scale(1.2);
+        }
+
+        main {
+            display: flex;
+            flex-direction: column;
+            gap: 2rem;
+        }
+
+        .input-section, .output-section {
+            background-color: var(--card-color);
+            border-radius: 8px;
+            padding: 1.5rem;
+            box-shadow: 0 4px 6px var(--shadow-color);
+            transition: box-shadow var(--animation-speed), background-color var(--animation-speed);
+            animation: slideUp var(--animation-speed);
+        }
+
+        .input-section:hover, .output-section:hover {
+            box-shadow: 0 8px 16px var(--shadow-color);
+        }
+
+        h2 {
+            margin-top: 0;
+            color: var(--primary-color);
+            border-bottom: 1px solid var(--border-color);
+            padding-bottom: 0.5rem;
+        }
+
+        textarea {
+            width: 100%;
+            min-height: 200px;
+            padding: 1rem;
+            border: 1px solid var(--border-color);
+            border-radius: 4px;
+            font-family: 'Fira Code', monospace;
+            font-size: 0.9rem;
+            resize: vertical;
+            background-color: var(--card-color);
+            color: var(--text-color);
+            transition: border-color var(--animation-speed), background-color var(--animation-speed);
+        }
+
+        .controls {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 1rem;
+            animation: fadeIn var(--animation-speed);
+        }
+
+        .mode-selector {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 1rem;
+        }
+
+        .mode-selector label {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            cursor: pointer;
+        }
+
+        .obfuscate-button, .copy-button, .download-button, .upload-button {
+            padding: 0.75rem 1.5rem;
+            border: none;
+            border-radius: 4px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all var(--animation-speed);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .obfuscate-button {
+            background-color: var(--primary-color);
+            color: white;
+        }
+
+        .obfuscate-button:hover {
+            background-color: #2980b9;
+            transform: translateY(-3px);
+        }
+
+        .obfuscate-button:active {
+            transform: translateY(1px);
+        }
+
+        .copy-button, .download-button {
+            background-color: var(--secondary-color);
+            color: var(--text-color);
+        }
+
+        .copy-button:hover, .download-button:hover {
+            background-color: #1e5fae;
+        }
+
+        .upload-button {
+            background-color: var(--secondary-color);
+            color: var(--text-color);
+            display: inline-block;
+            padding: 0.5rem 1rem;
+            cursor: pointer;
+        }
+
+        footer {
+            text-align: center;
+            margin-top: 2rem;
+            opacity: 0.7;
+            font-size: 0.9rem;
+            animation: fadeIn var(--animation-speed);
+        }
+
+        #file-upload {
+            display: none;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        @keyframes slideUp {
+            from { transform: translateY(20px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+
+        .ripple {
+            position: relative;
+            overflow: hidden;
+        }
+
+        .ripple:after {
+            content: "";
+            display: block;
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            top: 0;
+            left: 0;
+            pointer-events: none;
+            background-image: radial-gradient(circle, rgba(255, 255, 255, 0.3) 10%, transparent 10.01%);
+            background-repeat: no-repeat;
+            background-position: 50%;
+            transform: scale(10, 10);
+            opacity: 0;
+            transition: transform 0.5s, opacity 1s;
+        }
+
+        .ripple:active:after {
+            transform: scale(0, 0);
+            opacity: 0.3;
+            transition: 0s;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>MoonLight</h1>
+            <button id="theme-toggle" class="theme-button">🌙</button>
+        </header>
+
+        <main>
+            <div class="input-section">
+                <h2>Your Roblox Lua Code</h2>
+                <textarea id="lua-input" placeholder="Paste your Roblox Lua code here...">-- Example Roblox Lua code
+local player = game.Players.LocalPlayer
+local health = 100
+
+function printHealth()
+    print(player.Name .. " has " .. health .. " HP")
+end
+
+printHealth()
+                </textarea>
+                <label for="file-upload" class="upload-button ripple">Upload File</label>
+                <input type="file" id="file-upload" accept=".lua">
+            </div>
+
+            <div class="controls">
+                <div class="mode-selector">
+                    <label><input type="radio" name="mode" value="light" checked> Light</label>
+                    <label><input type="radio" name="mode" value="medium"> Medium</label>
+                    <label><input type="radio" name="mode" value="hard"> Hard</label>
+                </div>
+                <button id="obfuscate-button" class="obfuscate-button ripple">Obfuscate</button>
+            </div>
+
+            <div class="output-section">
+                <h2>Result</h2>
+                <textarea id="lua-output" placeholder="Obfuscated code will appear here..." readonly></textarea>
+                <button id="copy-button" class="copy-button ripple">Copy</button>
+                <button id="download-button" class="download-button ripple">Download</button>
+            </div>
+        </main>
+
+        <footer>
+            <p>© 2025 FireX Community. All rights reserved.</p>
+        </footer>
+    </div>
+
+    <script>
+        // Toggle theme
+        document.getElementById('theme-toggle').addEventListener('click', () => {
+            document.body.classList.toggle('light-theme');
+        });
+
+        // Generate random short name
+        function generateShortName(length = 6) {
+            const chars = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
+            let result = '_';
+            for (let i = 0; i < length; i++) {
+                result += chars.charAt(Math.floor(Math.random() * chars.length));
+            }
+            return result;
+        }
+
+        // Encode string to hex
+        function stringToHex(str) {
+            let hex = '';
+            for (let i = 0; i < str.length; i++) {
+                hex += '\\x' + str.charCodeAt(i).toString(16).padStart(2, '0');
+            }
+            return hex;
+        }
+
+        // Remove comments
+        function removeComments(code) {
+            return code.replace(/\-\-[^\n]*/g, '');
+        }
+
+        // Minify code to one line
+        function minifyCode(code) {
+            return code
+                .replace(/\s+/g, ' ')
+                .replace(/\s*([;=\(\)\{\}])\s*/g, '$1')
+                .replace(/\s*--[^\n]*\n/g, '\n')
+                .replace(/\n+/g, '')
+                .trim();
+        }
+
+        // Light obfuscation
+        function lightObfuscate(code) {
+            const varNames = {};
+            code = code.replace(/\b(local|function)\s+([a-zA-Z_][a-zA-Z0-9_]*)/g, (match, type, name) => {
+                if (!varNames[name]) {
+                    varNames[name] = generateShortName();
+                }
+                return `${type} ${varNames[name]}`;
+            });
+            code = code.replace(/\b([a-zA-Z_][a-zA-Z0-9_]*)\b/g, (match) => {
+                return varNames[match] || match;
+            });
+            code = code.replace(/"([^"]*)"/g, (match, str) => {
+                return `"${stringToHex(str)}"`;
+            });
+            return `-- Obfuscated with MoonLight v1.9.3\n${code}`;
+        }
+
+        // Medium obfuscation
+        function mediumObfuscate(code) {
+            code = lightObfuscate(code);
+            code = minifyCode(code);
+            return `-- Obfuscated with MoonLight v1.9.3\n${code}`;
+        }
+
+        // Hard obfuscation
+        function hardObfuscate(code) {
+            code = removeComments(code);
+            const varNames = {};
+            const funcNames = {};
+            const junkFunctions = [];
+            const junkVars = [];
+
+            // Generate junk functions
+            for (let i = 0; i < 5; i++) {
+                const junkFuncName = generateShortName(8);
+                junkFunctions.push(`local ${junkFuncName}=function(...)return nil end`);
+            }
+
+            // Generate junk variables
+            for (let i = 0; i < 7; i++) {
+                const junkVarName = generateShortName(8);
+                junkVars.push(`local ${junkVarName}=nil`);
+            }
+
+            // Replace variable and function names
+            code = code.replace(/\b(local|function)\s+([a-zA-Z_][a-zA-Z0-9_]*)/g, (match, type, name) => {
+                if (type === 'function' && !funcNames[name]) {
+                    funcNames[name] = generateShortName(12);
+                } else if (type === 'local' && !varNames[name]) {
+                    varNames[name] = generateShortName(10);
+                }
+                return `${type} ${type === 'function' ? funcNames[name] : varNames[name]}`;
+            });
+
+            // Replace all variable and function occurrences
+            code = code.replace(/\b([a-zA-Z_][a-zA-Z0-9_]*)\b/g, (match) => {
+                return varNames[match] || funcNames[match] || match;
+            });
+
+            // Encode strings
+            code = code.replace(/"([^"]*)"/g, (match, str) => {
+                return `"${stringToHex(str)}"`;
+            });
+
+            // Add junk code
+            const junkCode = [...junkFunctions, ...junkVars].join(' ');
+            code = `${junkCode} ${code}`;
+
+            // Minify to one line
+            code = minifyCode(code);
+
+            return `-- Obfuscated with MoonLight v1.9.3\n${code}`;
+        }
+
+        // Obfuscate button handler
+        document.getElementById('obfuscate-button').addEventListener('click', () => {
+            const button = document.getElementById('obfuscate-button');
+            button.textContent = 'Processing...';
+            button.disabled = true;
+
+            setTimeout(() => {
+                const input = document.getElementById('lua-input').value;
+                const output = document.getElementById('lua-output');
+                const mode = document.querySelector('input[name="mode"]:checked').value;
+
+                let obfuscatedCode;
+                if (mode === 'light') {
+                    obfuscatedCode = lightObfuscate(input);
+                } else if (mode === 'medium') {
+                    obfuscatedCode = mediumObfuscate(input);
+                } else if (mode === 'hard') {
+                    obfuscatedCode = hardObfuscate(input);
+                }
+
+                output.value = obfuscatedCode;
+                button.textContent = 'Obfuscate';
+                button.disabled = false;
+            }, 500);
+        });
+
+        // Copy result
+        document.getElementById('copy-button').addEventListener('click', () => {
+            const output = document.getElementById('lua-output');
+            output.select();
+            document.execCommand('copy');
+            alert('Code copied!');
+        });
+
+        // Upload file
+        document.getElementById('file-upload').addEventListener('change', (e) => {
+            const file = e.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = (event) => {
+                    document.getElementById('lua-input').value = event.target.result;
+                };
+                reader.readAsText(file);
+            }
+        });
+
+        // Download result
+        document.getElementById('download-button').addEventListener('click', () => {
+            const output = document.getElementById('lua-output').value;
+            const blob = new Blob([output], { type: 'text/plain' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'moonlight_obfuscated.lua';
+            a.click();
+        });
+    </script>
+</body>
+</html>
+ы
