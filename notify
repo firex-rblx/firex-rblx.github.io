@@ -188,10 +188,39 @@ local function ResetObjects()
     end
 end
 
-local function FadeOutAfter(MainFrame, Seconds)
+local function FadeOutAfter(MainFrame, Seconds, ProgressBar)
+    local StartTime = tick()
+    local EndTime = StartTime + Seconds
+    
+    -- Update progress bar in real-time
+    local connection
+    connection = RunService.Heartbeat:Connect(function()
+        if not MainFrame or not MainFrame.Parent then
+            connection:Disconnect()
+            return
+        end
+        
+        local CurrentTime = tick()
+        local Elapsed = CurrentTime - StartTime
+        local Remaining = math.max(0, EndTime - CurrentTime)
+        local Progress = math.min(1, Elapsed / Seconds)
+        
+        if ProgressBar then
+            ProgressBar.Size = UDim2.new(1 - Progress, 0, 0, 3)
+            ProgressBar.BackgroundColor3 = Color3.fromHSV(0.3 * (1 - Progress), 0.8, 0.9)
+        end
+        
+        if CurrentTime >= EndTime then
+            connection:Disconnect()
+        end
+    end)
+    
     wait(Seconds)
 
     FadeProperty(MainFrame)
+    if ProgressBar then
+        FadeProperty(ProgressBar)
+    end
     for _, child in ipairs(MainFrame:GetDescendants()) do
         if child:IsA("GuiObject") then
             FadeProperty(child)
@@ -208,6 +237,9 @@ local function FadeOutAfter(MainFrame, Seconds)
     ResetObjects()
 
     delay(0.1, function()
+        if connection then
+            connection:Disconnect()
+        end
         if MainFrame then
             MainFrame:Destroy()
         end
@@ -239,7 +271,7 @@ return {
             totalHeight += textSize.Y + 10
         end
 
-        totalHeight = math.max(totalHeight, 40) + 16
+        totalHeight = math.max(totalHeight, 40) + 16 + 6 -- Added 6 pixels for progress bar
 
         local MainFrame = Instance.new("Frame")
         MainFrame.BackgroundTransparency = 1
@@ -271,6 +303,31 @@ return {
         Border.ZIndex = 2
         Border.Parent = NotificationContainer
 
+        -- Progress Bar (Timer Line)
+        local ProgressBarContainer = Instance.new("Frame")
+        ProgressBarContainer.Size = UDim2.new(1, -16, 0, 3)
+        ProgressBarContainer.Position = UDim2.new(0, 8, 1, -8)
+        ProgressBarContainer.AnchorPoint = Vector2.new(0, 1)
+        ProgressBarContainer.BackgroundColor3 = Color3.fromRGB(40, 40, 40)
+        ProgressBarContainer.BorderSizePixel = 0
+        ProgressBarContainer.ZIndex = 3
+        ProgressBarContainer.Parent = NotificationContainer
+
+        local ProgressBarCorner = Instance.new("UICorner")
+        ProgressBarCorner.CornerRadius = UDim.new(1, 0)
+        ProgressBarCorner.Parent = ProgressBarContainer
+
+        local ProgressBar = Instance.new("Frame")
+        ProgressBar.Size = UDim2.new(1, 0, 1, 0)
+        ProgressBar.BackgroundColor3 = Color3.fromRGB(0, 170, 255)
+        ProgressBar.BorderSizePixel = 0
+        ProgressBar.ZIndex = 4
+        ProgressBar.Parent = ProgressBarContainer
+
+        local ProgressBarInnerCorner = Instance.new("UICorner")
+        ProgressBarInnerCorner.CornerRadius = UDim.new(1, 0)
+        ProgressBarInnerCorner.Parent = ProgressBar
+
         local contentPosition = 8
 
         if Title ~= "" then
@@ -278,6 +335,7 @@ return {
             titleLabel.Size = UDim2.new(1, -16, 0, 24)
             titleLabel.Position = UDim2.new(0, 8, 0, contentPosition)
             titleLabel.TextTruncate = Enum.TextTruncate.AtEnd
+            titleLabel.ZIndex = 3
             titleLabel.Parent = NotificationContainer
             contentPosition += 24 + 4
         end
@@ -285,15 +343,16 @@ return {
         if Description ~= "" then
             local descLabel = DescriptionLabel(Description)
             descLabel.TextWrapped = true
-            descLabel.Size = UDim2.new(1, -16, 1, -contentPosition - 8)
+            descLabel.Size = UDim2.new(1, -16, 1, -contentPosition - 8 - 6) -- Adjusted for progress bar
             descLabel.Position = UDim2.new(0, 8, 0, contentPosition)
             descLabel.TextYAlignment = Title ~= "" and Enum.TextYAlignment.Top or Enum.TextYAlignment.Center
+            descLabel.ZIndex = 3
             descLabel.Parent = NotificationContainer
         end
 
         table.insert(InstructionObjects, {MainFrame, 0, false})
 
-        coroutine.wrap(FadeOutAfter)(MainFrame, Duration)
+        coroutine.wrap(FadeOutAfter)(MainFrame, Duration, ProgressBar)
 
         return MainFrame
     end,
