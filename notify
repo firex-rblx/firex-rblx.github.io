@@ -12,6 +12,106 @@ Container.Size = UDim2.new(0, 300, 0.5, 0)
 Container.BackgroundTransparency = 1
 Container.Parent = NotifGui
 
+-- Система тем
+local Themes = {
+    ["dark"] = {
+        Background = Color3.fromRGB(25, 25, 25),
+        BackgroundTransparency = 0.05,
+        Border = Color3.fromRGB(60, 60, 60),
+        BorderTransparency = 0.7,
+        Title = Color3.fromRGB(255, 255, 255),
+        Description = Color3.fromRGB(220, 220, 220),
+        Shadow = Color3.fromRGB(15, 15, 15),
+        ProgressStart = Color3.fromRGB(0, 170, 255),
+        ProgressEnd = Color3.fromRGB(255, 50, 50),
+        ProgressBg = Color3.fromRGB(40, 40, 40)
+    },
+    ["light"] = {
+        Background = Color3.fromRGB(245, 245, 245),
+        BackgroundTransparency = 0.02,
+        Border = Color3.fromRGB(200, 200, 200),
+        BorderTransparency = 0.5,
+        Title = Color3.fromRGB(30, 30, 30),
+        Description = Color3.fromRGB(80, 80, 80),
+        Shadow = Color3.fromRGB(180, 180, 180),
+        ProgressStart = Color3.fromRGB(0, 120, 215),
+        ProgressEnd = Color3.fromRGB(215, 0, 0),
+        ProgressBg = Color3.fromRGB(220, 220, 220)
+    },
+    ["crimson"] = {
+        Background = Color3.fromRGB(40, 15, 20),
+        BackgroundTransparency = 0.05,
+        Border = Color3.fromRGB(120, 30, 45),
+        BorderTransparency = 0.6,
+        Title = Color3.fromRGB(255, 220, 220),
+        Description = Color3.fromRGB(240, 180, 180),
+        Shadow = Color3.fromRGB(25, 8, 12),
+        ProgressStart = Color3.fromRGB(220, 60, 80),
+        ProgressEnd = Color3.fromRGB(255, 160, 40),
+        ProgressBg = Color3.fromRGB(50, 20, 25)
+    },
+    ["dark blue"] = {
+        Background = Color3.fromRGB(15, 25, 40),
+        BackgroundTransparency = 0.05,
+        Border = Color3.fromRGB(40, 80, 120),
+        BorderTransparency = 0.6,
+        Title = Color3.fromRGB(220, 230, 255),
+        Description = Color3.fromRGB(180, 200, 240),
+        Shadow = Color3.fromRGB(10, 18, 30),
+        ProgressStart = Color3.fromRGB(0, 150, 255),
+        ProgressEnd = Color3.fromRGB(100, 200, 255),
+        ProgressBg = Color3.fromRGB(25, 40, 60)
+    },
+    ["lavender"] = {
+        Background = Color3.fromRGB(45, 30, 60),
+        BackgroundTransparency = 0.05,
+        Border = Color3.fromRGB(100, 80, 140),
+        BorderTransparency = 0.6,
+        Title = Color3.fromRGB(240, 230, 255),
+        Description = Color3.fromRGB(210, 200, 230),
+        Shadow = Color3.fromRGB(35, 25, 45),
+        ProgressStart = Color3.fromRGB(160, 120, 240),
+        ProgressEnd = Color3.fromRGB(220, 180, 255),
+        ProgressBg = Color3.fromRGB(55, 45, 75)
+    },
+    ["forest"] = {
+        Background = Color3.fromRGB(20, 35, 25),
+        BackgroundTransparency = 0.05,
+        Border = Color3.fromRGB(50, 100, 60),
+        BorderTransparency = 0.6,
+        Title = Color3.fromRGB(220, 255, 220),
+        Description = Color3.fromRGB(180, 220, 180),
+        Shadow = Color3.fromRGB(15, 25, 18),
+        ProgressStart = Color3.fromRGB(60, 200, 80),
+        ProgressEnd = Color3.fromRGB(160, 255, 120),
+        ProgressBg = Color3.fromRGB(30, 50, 35)
+    },
+    ["sunset"] = {
+        Background = Color3.fromRGB(50, 25, 35),
+        BackgroundTransparency = 0.05,
+        Border = Color3.fromRGB(140, 70, 90),
+        BorderTransparency = 0.6,
+        Title = Color3.fromRGB(255, 220, 180),
+        Description = Color3.fromRGB(240, 200, 160),
+        Shadow = Color3.fromRGB(35, 18, 25),
+        ProgressStart = Color3.fromRGB(255, 120, 80),
+        ProgressEnd = Color3.fromRGB(255, 200, 100),
+        ProgressBg = Color3.fromRGB(60, 35, 45)
+    },
+    ["ocean"] = {
+        Background = Color3.fromRGB(20, 35, 50),
+        BackgroundTransparency = 0.05,
+        Border = Color3.fromRGB(60, 120, 180),
+        BorderTransparency = 0.6,
+        Title = Color3.fromRGB(200, 230, 255),
+        Description = Color3.fromRGB(160, 200, 230),
+        Shadow = Color3.fromRGB(15, 25, 35),
+        ProgressStart = Color3.fromRGB(80, 180, 255),
+        ProgressEnd = Color3.fromRGB(140, 220, 255),
+        ProgressBg = Color3.fromRGB(30, 50, 70)
+    }
+}
+
 local function CreateBlurBackground(parent)
     if game:GetService("RunService"):IsStudio() then
         local BlurFrame = Instance.new("Frame")
@@ -22,7 +122,7 @@ local function CreateBlurBackground(parent)
         BlurFrame.ZIndex = -1
 
         local Corner = Instance.new("UICorner")
-        Corner.CornerRadius = UDim.new(0, 12)
+        Corner.CornerRadius = UDim.new(0, 16)
         Corner.Parent = BlurFrame
 
         return BlurFrame
@@ -42,24 +142,49 @@ local function Image(ID, Button)
     return NewImage
 end
 
-local function Round2px()
-    local NewImage = Image("http://www.roblox.com/asset/?id=5761488251")
-    NewImage.ScaleType = Enum.ScaleType.Slice
-    NewImage.SliceCenter = Rect.new(2, 2, 298, 298)
-    NewImage.ImageColor3 = Color3.fromRGB(25, 25, 25)
-    NewImage.ImageTransparency = 0.05
-    return NewImage
+-- Обновленная функция для скругленных углов с более плавным видом
+local function CreateRoundedFrame(theme)
+    local Frame = Instance.new("Frame")
+    Frame.BackgroundColor3 = theme.Background
+    Frame.BackgroundTransparency = theme.BackgroundTransparency
+    Frame.Size = UDim2.new(1, 0, 1, 0)
+    Frame.Position = UDim2.new(0, 0, 0, 0)
+    
+    local Corner = Instance.new("UICorner")
+    Corner.CornerRadius = UDim.new(0, 16)
+    Corner.Parent = Frame
+    
+    return Frame
 end
 
-local function Shadow2px()
-    local NewImage = Image("http://www.roblox.com/asset/?id=5761498316")
-    NewImage.ScaleType = Enum.ScaleType.Slice
-    NewImage.SliceCenter = Rect.new(17, 17, 283, 283)
-    NewImage.Size = UDim2.fromScale(1, 1) + UDim2.fromOffset(30, 30)
-    NewImage.Position = -UDim2.fromOffset(15, 15)
-    NewImage.ImageColor3 = Color3.fromRGB(15, 15, 15)
-    NewImage.ImageTransparency = 0.1
-    return NewImage
+-- Обновленная функция для тени с более плавными углами
+local function CreateShadow(theme)
+    local Shadow = Instance.new("Frame")
+    Shadow.Size = UDim2.new(1, 30, 1, 30)
+    Shadow.Position = UDim2.new(-0.05, -15, -0.05, -15)
+    Shadow.BackgroundColor3 = theme.Shadow
+    Shadow.BackgroundTransparency = 0.1
+    Shadow.ZIndex = -1
+    
+    local Corner = Instance.new("UICorner")
+    Corner.CornerRadius = UDim.new(0, 20)
+    Corner.Parent = Shadow
+    
+    return Shadow
+end
+
+-- Обновленная функция для границы
+local function CreateBorder(theme)
+    local Border = Image("http://www.roblox.com/asset/?id=5554236805")
+    Border.ScaleType = Enum.ScaleType.Slice
+    Border.SliceCenter = Rect.new(3, 3, 297, 297)
+    Border.Size = UDim2.new(1, 2, 1, 2)
+    Border.Position = UDim2.new(0, -1, 0, -1)
+    Border.ImageColor3 = theme.Border
+    Border.ImageTransparency = theme.BorderTransparency
+    Border.ZIndex = 2
+    
+    return Border
 end
 
 local Padding = 12
@@ -146,15 +271,15 @@ local function Label(Text, Font, Size, Button)
     return Label
 end
 
-local function TitleLabel(Text)
+local function TitleLabel(Text, theme)
     local label = Label(Text, TitleSettings.Font, TitleSettings.Size)
-    label.TextColor3 = Color3.fromRGB(255, 255, 255)
+    label.TextColor3 = theme.Title
     return label
 end
 
-local function DescriptionLabel(Text)
+local function DescriptionLabel(Text, theme)
     local label = Label(Text, DescriptionSettings.Font, DescriptionSettings.Size)
-    label.TextColor3 = Color3.fromRGB(220, 220, 220)
+    label.TextColor3 = theme.Description
     label.LineHeight = DescriptionSettings.LineHeight
     return label
 end
@@ -188,7 +313,7 @@ local function ResetObjects()
     end
 end
 
-local function FadeOutAfter(MainFrame, Seconds, ProgressBar)
+local function FadeOutAfter(MainFrame, Seconds, ProgressBar, theme)
     local StartTime = tick()
     local EndTime = StartTime + Seconds
     
@@ -207,7 +332,9 @@ local function FadeOutAfter(MainFrame, Seconds, ProgressBar)
         
         if ProgressBar then
             ProgressBar.Size = UDim2.new(1 - Progress, 0, 0, 3)
-            ProgressBar.BackgroundColor3 = Color3.fromHSV(0.3 * (1 - Progress), 0.8, 0.9)
+            -- Плавный переход цвета прогресс-бара
+            local hue = 0.3 * (1 - Progress)  -- От зеленого (0.3) к красному (0)
+            ProgressBar.BackgroundColor3 = Color3.fromHSV(hue, 0.8, 0.9)
         end
         
         if CurrentTime >= EndTime then
@@ -247,11 +374,28 @@ local function FadeOutAfter(MainFrame, Seconds, ProgressBar)
 end
 
 return {
+    -- Функция для получения списка доступных тем
+    GetThemes = function()
+        local themeList = {}
+        for themeName, _ in pairs(Themes) do
+            table.insert(themeList, themeName)
+        end
+        return themeList
+    end,
+    
     Notify = function(Properties)
         local Properties = typeof(Properties) == "table" and Properties or {}
         local Title = Properties.Title or ""
         local Description = Properties.Description or ""
         local Duration = Properties.Duration or 5
+        local ThemeName = Properties.Theme or "dark"
+        
+        -- Проверка существования темы
+        local theme = Themes[ThemeName]
+        if not theme then
+            warn("Theme '" .. ThemeName .. "' not found. Using default dark theme.")
+            theme = Themes["dark"]
+        end
 
         if Title == "" and Description == "" then return end
 
@@ -285,22 +429,16 @@ return {
             BlurBackground.ZIndex = -1
         end
 
-        local NotificationContainer = Round2px()
-        NotificationContainer.Size = UDim2.new(1, 0, 1, 0)
-        NotificationContainer.Position = UDim2.new(0, 0, 0, 0)
+        -- Создаем основной контейнер с закругленными углами
+        local NotificationContainer = CreateRoundedFrame(theme)
         NotificationContainer.Parent = MainFrame
 
-        local shadow = Shadow2px()
+        -- Добавляем тень
+        local shadow = CreateShadow(theme)
         shadow.Parent = NotificationContainer
 
-        local Border = Image("http://www.roblox.com/asset/?id=5554236805")
-        Border.ScaleType = Enum.ScaleType.Slice
-        Border.SliceCenter = Rect.new(3, 3, 297, 297)
-        Border.Size = UDim2.new(1, 2, 1, 2)
-        Border.Position = UDim2.new(0, -1, 0, -1)
-        Border.ImageColor3 = Color3.fromRGB(60, 60, 60)
-        Border.ImageTransparency = 0.7
-        Border.ZIndex = 2
+        -- Добавляем границу
+        local Border = CreateBorder(theme)
         Border.Parent = NotificationContainer
 
         -- Progress Bar (Timer Line)
@@ -308,7 +446,7 @@ return {
         ProgressBarContainer.Size = UDim2.new(1, -16, 0, 3)
         ProgressBarContainer.Position = UDim2.new(0, 8, 1, -8)
         ProgressBarContainer.AnchorPoint = Vector2.new(0, 1)
-        ProgressBarContainer.BackgroundColor3 = Color3.fromRGB(40, 40, 40)
+        ProgressBarContainer.BackgroundColor3 = theme.ProgressBg
         ProgressBarContainer.BorderSizePixel = 0
         ProgressBarContainer.ZIndex = 3
         ProgressBarContainer.Parent = NotificationContainer
@@ -319,7 +457,7 @@ return {
 
         local ProgressBar = Instance.new("Frame")
         ProgressBar.Size = UDim2.new(1, 0, 1, 0)
-        ProgressBar.BackgroundColor3 = Color3.fromRGB(0, 170, 255)
+        ProgressBar.BackgroundColor3 = theme.ProgressStart
         ProgressBar.BorderSizePixel = 0
         ProgressBar.ZIndex = 4
         ProgressBar.Parent = ProgressBarContainer
@@ -331,7 +469,7 @@ return {
         local contentPosition = 8
 
         if Title ~= "" then
-            local titleLabel = TitleLabel(Title)
+            local titleLabel = TitleLabel(Title, theme)
             titleLabel.Size = UDim2.new(1, -16, 0, 24)
             titleLabel.Position = UDim2.new(0, 8, 0, contentPosition)
             titleLabel.TextTruncate = Enum.TextTruncate.AtEnd
@@ -341,7 +479,7 @@ return {
         end
 
         if Description ~= "" then
-            local descLabel = DescriptionLabel(Description)
+            local descLabel = DescriptionLabel(Description, theme)
             descLabel.TextWrapped = true
             descLabel.Size = UDim2.new(1, -16, 1, -contentPosition - 8 - 6) -- Adjusted for progress bar
             descLabel.Position = UDim2.new(0, 8, 0, contentPosition)
@@ -352,7 +490,7 @@ return {
 
         table.insert(InstructionObjects, {MainFrame, 0, false})
 
-        coroutine.wrap(FadeOutAfter)(MainFrame, Duration, ProgressBar)
+        coroutine.wrap(FadeOutAfter)(MainFrame, Duration, ProgressBar, theme)
 
         return MainFrame
     end,
