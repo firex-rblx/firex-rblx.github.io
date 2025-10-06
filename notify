@@ -1,10 +1,17 @@
 local TweenService = game:GetService("TweenService")
 local RunService = game:GetService("RunService")
 local TextService = game:GetService("TextService")
+local HttpService = game:GetService("HttpService")
 local Player = game:GetService("Players").LocalPlayer
+
+-- Загрузка библиотеки Lucide Icons
+local Lucide = loadstring(game:HttpGet("https://github.com/latte-soft/lucide-roblox/releases/latest/download/lucide-roblox.luau"))()
+
+-- Создание GUI
 local NotifGui = Instance.new("ScreenGui")
 NotifGui.Name = "FireXNotify"
-NotifGui.Parent = RunService:IsStudio() and Player.PlayerGui or game:GetService("CoreGui")
+NotifGui.Parent = RunService:IsStudio() and Player:WaitForChild("PlayerGui") or game:GetService("CoreGui")
+
 local Container = Instance.new("Frame")
 Container.Name = "Container"
 Container.Position = UDim2.new(0, 20, 0.5, -20)
@@ -104,8 +111,9 @@ local Themes = {
     }
 }
 
+-- Вспомогательные функции
 local function CreateBlurBackground(parent, theme)
-    if game:GetService("RunService"):IsStudio() then
+    if RunService:IsStudio() then
         local BlurFrame = Instance.new("Frame")
         BlurFrame.Size = UDim2.new(1, 40, 1, 40)
         BlurFrame.Position = UDim2.new(-0.07, 0, -0.07, 0)
@@ -151,6 +159,7 @@ local function Shadow2px(theme)
     return NewImage
 end
 
+-- Настройки анимации
 local Padding = 12
 local DescriptionPadding = 12
 local InstructionObjects = {}
@@ -160,17 +169,14 @@ local TweenDirection = Enum.EasingDirection.Out
 local LastTick = tick()
 
 local function CalculateBounds(TableOfObjects)
-    local TableOfObjects = typeof(TableOfObjects) == "table" and TableOfObjects or {}
     local Y = 0
-    for _, Object in next, TableOfObjects do
+    for _, Object in next, TableOfObjects or {} do
         if Object:IsA("GuiObject") then
             Y += Object.AbsoluteSize.Y
         end
     end
     return Y
 end
-
-local CachedObjects = {}
 
 local function Update()
     local DeltaTime = tick() - LastTick
@@ -198,12 +204,12 @@ local function Update()
         MainFrame.Position = CurrentPos:Lerp(TargetPos, NewValue)
         table.insert(PreviousObjects, MainFrame)
     end
-    CachedObjects = PreviousObjects
     LastTick = tick()
 end
 
 RunService:BindToRenderStep("UpdateList", 0, Update)
 
+-- Настройки текста
 local TitleSettings = {
     Font = Enum.Font.GothamSemibold,
     Size = 15
@@ -241,6 +247,7 @@ local function DescriptionLabel(Text, theme)
     return label
 end
 
+-- Анимация исчезновения
 local PropertyTweenOut = {
     Text = "TextTransparency",
     Fram = "BackgroundTransparency",
@@ -273,30 +280,24 @@ end
 local function FadeOutAfter(MainFrame, Seconds, ProgressBar)
     local StartTime = tick()
     local EndTime = StartTime + Seconds
-
     local connection
     connection = RunService.Heartbeat:Connect(function()
         if not MainFrame or not MainFrame.Parent then
             connection:Disconnect()
             return
         end
-
         local CurrentTime = tick()
         local Elapsed = CurrentTime - StartTime
-        local Remaining = math.max(0, EndTime - CurrentTime)
         local Progress = math.min(1, Elapsed / Seconds)
-
         if ProgressBar then
             ProgressBar.Size = UDim2.new(1 - Progress, 0, 0, 3)
             local hue = 0.3 * (1 - Progress)
             ProgressBar.BackgroundColor3 = Color3.fromHSV(hue, 0.8, 0.9)
         end
-
         if CurrentTime >= EndTime then
             connection:Disconnect()
         end
     end)
-
     wait(Seconds)
     FadeProperty(MainFrame)
     if ProgressBar then
@@ -323,20 +324,18 @@ local function FadeOutAfter(MainFrame, Seconds, ProgressBar)
     end)
 end
 
--- Функция для загрузки иконки из Lucide Icons
-local function LoadLucideIcon(iconName, theme, themed)
-    local iconId = string.format("rbxassetid://13608499470") -- Пример ID для Lucide Icons (замените на реальный)
-    local icon = Instance.new("ImageLabel")
-    icon.Image = string.format("https://raw.githubusercontent.com/lucide-icons/lucide/master/icons/%s.svg", iconName)
-    icon.BackgroundTransparency = 1
+-- Создание иконки с использованием Lucide
+local function CreateLucideIcon(iconName, theme, themed)
+    local icon = Lucide.Create(iconName)
     icon.Size = UDim2.new(0, 20, 0, 20)
     icon.ImageColor3 = themed and theme.IconColor or Color3.fromRGB(255, 255, 255)
+    icon.BackgroundTransparency = 1
     return icon
 end
 
-return {
+-- Основная функция уведомления
+local Notify = {
     Themes = Themes,
-
     Notify = function(Properties)
         local Properties = typeof(Properties) == "table" and Properties or {}
         local Title = Properties.Title or ""
@@ -422,7 +421,7 @@ return {
         -- Icon
         local contentPosition = 8
         if Icon then
-            local icon = LoadLucideIcon(Icon, theme, IconThemed)
+            local icon = CreateLucideIcon(Icon, theme, IconThemed)
             icon.Position = UDim2.new(0, 12, 0, 12)
             icon.ZIndex = 3
             icon.Parent = NotificationContainer
@@ -454,5 +453,7 @@ return {
         table.insert(InstructionObjects, {MainFrame, 0, false})
         coroutine.wrap(FadeOutAfter)(MainFrame, Duration, ProgressBar)
         return MainFrame
-    end,
+    end
 }
+
+return Notify
