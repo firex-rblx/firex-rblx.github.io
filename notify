@@ -5,7 +5,13 @@ local HttpService = game:GetService("HttpService")
 local Player = game:GetService("Players").LocalPlayer
 
 -- Загрузка библиотеки Lucide Icons
-local Lucide = loadstring(game:HttpGet("https://github.com/latte-soft/lucide-roblox/releases/latest/download/lucide-roblox.luau"))()
+local success, Lucide = pcall(function()
+    return loadstring(game:HttpGet("https://raw.githubusercontent.com/latte-soft/lucide-roblox/main/src/init.lua"))()
+end)
+
+if not success then
+    warn("Не удалось загрузить библиотеку Lucide Icons. Иконки работать не будут.")
+end
 
 -- Создание GUI
 local NotifGui = Instance.new("ScreenGui")
@@ -31,83 +37,6 @@ local Themes = {
         DescriptionColor = Color3.fromRGB(220, 220, 220),
         StudioBlurColor = Color3.fromRGB(20, 20, 20),
         IconColor = Color3.fromRGB(255, 255, 255)
-    },
-    ["light"] = {
-        BackgroundColor = Color3.fromRGB(240, 240, 240),
-        ShadowColor = Color3.fromRGB(200, 200, 200),
-        BorderColor = Color3.fromRGB(180, 180, 180),
-        ProgressBarBg = Color3.fromRGB(220, 220, 220),
-        ProgressBar = Color3.fromRGB(0, 120, 215),
-        TitleColor = Color3.fromRGB(30, 30, 30),
-        DescriptionColor = Color3.fromRGB(80, 80, 80),
-        StudioBlurColor = Color3.fromRGB(240, 240, 240),
-        IconColor = Color3.fromRGB(30, 30, 30)
-    },
-    ["crimson"] = {
-        BackgroundColor = Color3.fromRGB(40, 0, 0),
-        ShadowColor = Color3.fromRGB(20, 0, 0),
-        BorderColor = Color3.fromRGB(100, 0, 0),
-        ProgressBarBg = Color3.fromRGB(60, 0, 0),
-        ProgressBar = Color3.fromRGB(255, 0, 0),
-        TitleColor = Color3.fromRGB(255, 200, 200),
-        DescriptionColor = Color3.fromRGB(255, 150, 150),
-        StudioBlurColor = Color3.fromRGB(20, 0, 0),
-        IconColor = Color3.fromRGB(255, 200, 200)
-    },
-    ["dark blue"] = {
-        BackgroundColor = Color3.fromRGB(10, 15, 40),
-        ShadowColor = Color3.fromRGB(5, 8, 20),
-        BorderColor = Color3.fromRGB(30, 45, 90),
-        ProgressBarBg = Color3.fromRGB(20, 25, 60),
-        ProgressBar = Color3.fromRGB(0, 150, 255),
-        TitleColor = Color3.fromRGB(200, 220, 255),
-        DescriptionColor = Color3.fromRGB(150, 180, 230),
-        StudioBlurColor = Color3.fromRGB(5, 10, 25),
-        IconColor = Color3.fromRGB(200, 220, 255)
-    },
-    ["lavender"] = {
-        BackgroundColor = Color3.fromRGB(40, 20, 60),
-        ShadowColor = Color3.fromRGB(20, 10, 30),
-        BorderColor = Color3.fromRGB(80, 40, 120),
-        ProgressBarBg = Color3.fromRGB(50, 30, 80),
-        ProgressBar = Color3.fromRGB(180, 140, 255),
-        TitleColor = Color3.fromRGB(240, 220, 255),
-        DescriptionColor = Color3.fromRGB(200, 180, 230),
-        StudioBlurColor = Color3.fromRGB(25, 15, 40),
-        IconColor = Color3.fromRGB(240, 220, 255)
-    },
-    ["forest"] = {
-        BackgroundColor = Color3.fromRGB(10, 40, 15),
-        ShadowColor = Color3.fromRGB(5, 20, 8),
-        BorderColor = Color3.fromRGB(30, 90, 40),
-        ProgressBarBg = Color3.fromRGB(20, 60, 25),
-        ProgressBar = Color3.fromRGB(0, 255, 100),
-        TitleColor = Color3.fromRGB(200, 255, 200),
-        DescriptionColor = Color3.fromRGB(150, 230, 180),
-        StudioBlurColor = Color3.fromRGB(5, 25, 10),
-        IconColor = Color3.fromRGB(200, 255, 200)
-    },
-    ["sunset"] = {
-        BackgroundColor = Color3.fromRGB(60, 30, 10),
-        ShadowColor = Color3.fromRGB(30, 15, 5),
-        BorderColor = Color3.fromRGB(120, 60, 20),
-        ProgressBarBg = Color3.fromRGB(80, 40, 15),
-        ProgressBar = Color3.fromRGB(255, 150, 0),
-        TitleColor = Color3.fromRGB(255, 230, 200),
-        DescriptionColor = Color3.fromRGB(255, 200, 150),
-        StudioBlurColor = Color3.fromRGB(40, 20, 5),
-        IconColor = Color3.fromRGB(255, 230, 200)
-    },
-    ["ocean"] = {
-        BackgroundColor = Color3.fromRGB(10, 30, 50),
-        ShadowColor = Color3.fromRGB(5, 15, 25),
-        BorderColor = Color3.fromRGB(20, 60, 100),
-        ProgressBarBg = Color3.fromRGB(15, 40, 70),
-        ProgressBar = Color3.fromRGB(0, 200, 255),
-        TitleColor = Color3.fromRGB(200, 230, 255),
-        DescriptionColor = Color3.fromRGB(150, 200, 230),
-        StudioBlurColor = Color3.fromRGB(5, 20, 35),
-        IconColor = Color3.fromRGB(200, 230, 255)
     }
 }
 
@@ -326,7 +255,17 @@ end
 
 -- Создание иконки с использованием Lucide
 local function CreateLucideIcon(iconName, theme, themed)
+    if not Lucide then
+        warn("Библиотека Lucide не загружена. Иконка не будет отображена.")
+        return nil
+    end
+
     local icon = Lucide.Create(iconName)
+    if not icon then
+        warn("Не удалось создать иконку: " .. tostring(iconName))
+        return nil
+    end
+
     icon.Size = UDim2.new(0, 20, 0, 20)
     icon.ImageColor3 = themed and theme.IconColor or Color3.fromRGB(255, 255, 255)
     icon.BackgroundTransparency = 1
@@ -422,10 +361,12 @@ local Notify = {
         local contentPosition = 8
         if Icon then
             local icon = CreateLucideIcon(Icon, theme, IconThemed)
-            icon.Position = UDim2.new(0, 12, 0, 12)
-            icon.ZIndex = 3
-            icon.Parent = NotificationContainer
-            contentPosition = 12 + 20 + 8
+            if icon then
+                icon.Position = UDim2.new(0, 12, 0, 12)
+                icon.ZIndex = 3
+                icon.Parent = NotificationContainer
+                contentPosition = 12 + 20 + 8
+            end
         end
 
         -- Title
