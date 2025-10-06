@@ -1,23 +1,10 @@
 local TweenService = game:GetService("TweenService")
 local RunService = game:GetService("RunService")
 local TextService = game:GetService("TextService")
-local HttpService = game:GetService("HttpService")
 local Player = game:GetService("Players").LocalPlayer
-
--- Загрузка библиотеки Lucide Icons
-local success, Lucide = pcall(function()
-    return loadstring(game:HttpGet("https://raw.githubusercontent.com/latte-soft/lucide-roblox/main/src/init.lua"))()
-end)
-
-if not success then
-    warn("Не удалось загрузить библиотеку Lucide Icons. Иконки работать не будут.")
-end
-
--- Создание GUI
 local NotifGui = Instance.new("ScreenGui")
 NotifGui.Name = "FireXNotify"
-NotifGui.Parent = RunService:IsStudio() and Player:WaitForChild("PlayerGui") or game:GetService("CoreGui")
-
+NotifGui.Parent = RunService:IsStudio() and Player.PlayerGui or game:GetService("CoreGui")
 local Container = Instance.new("Frame")
 Container.Name = "Container"
 Container.Position = UDim2.new(0, 20, 0.5, -20)
@@ -35,28 +22,99 @@ local Themes = {
         ProgressBar = Color3.fromRGB(0, 170, 255),
         TitleColor = Color3.fromRGB(255, 255, 255),
         DescriptionColor = Color3.fromRGB(220, 220, 220),
-        StudioBlurColor = Color3.fromRGB(20, 20, 20),
-        IconColor = Color3.fromRGB(255, 255, 255)
+        StudioBlurColor = Color3.fromRGB(20, 20, 20)
+    },
+    ["light"] = {
+        BackgroundColor = Color3.fromRGB(240, 240, 240),
+        ShadowColor = Color3.fromRGB(200, 200, 200),
+        BorderColor = Color3.fromRGB(180, 180, 180),
+        ProgressBarBg = Color3.fromRGB(220, 220, 220),
+        ProgressBar = Color3.fromRGB(0, 120, 215),
+        TitleColor = Color3.fromRGB(30, 30, 30),
+        DescriptionColor = Color3.fromRGB(80, 80, 80),
+        StudioBlurColor = Color3.fromRGB(240, 240, 240)
+    },
+    ["crimson"] = {
+        BackgroundColor = Color3.fromRGB(40, 0, 0),
+        ShadowColor = Color3.fromRGB(20, 0, 0),
+        BorderColor = Color3.fromRGB(100, 0, 0),
+        ProgressBarBg = Color3.fromRGB(60, 0, 0),
+        ProgressBar = Color3.fromRGB(255, 0, 0),
+        TitleColor = Color3.fromRGB(255, 200, 200),
+        DescriptionColor = Color3.fromRGB(255, 150, 150),
+        StudioBlurColor = Color3.fromRGB(20, 0, 0)
+    },
+    ["dark blue"] = {
+        BackgroundColor = Color3.fromRGB(10, 15, 40),
+        ShadowColor = Color3.fromRGB(5, 8, 20),
+        BorderColor = Color3.fromRGB(30, 45, 90),
+        ProgressBarBg = Color3.fromRGB(20, 25, 60),
+        ProgressBar = Color3.fromRGB(0, 150, 255),
+        TitleColor = Color3.fromRGB(200, 220, 255),
+        DescriptionColor = Color3.fromRGB(150, 180, 230),
+        StudioBlurColor = Color3.fromRGB(5, 10, 25)
+    },
+    ["lavender"] = {
+        BackgroundColor = Color3.fromRGB(40, 20, 60),
+        ShadowColor = Color3.fromRGB(20, 10, 30),
+        BorderColor = Color3.fromRGB(80, 40, 120),
+        ProgressBarBg = Color3.fromRGB(50, 30, 80),
+        ProgressBar = Color3.fromRGB(180, 140, 255),
+        TitleColor = Color3.fromRGB(240, 220, 255),
+        DescriptionColor = Color3.fromRGB(200, 180, 230),
+        StudioBlurColor = Color3.fromRGB(25, 15, 40)
+    },
+    ["forest"] = {
+        BackgroundColor = Color3.fromRGB(10, 40, 15),
+        ShadowColor = Color3.fromRGB(5, 20, 8),
+        BorderColor = Color3.fromRGB(30, 90, 40),
+        ProgressBarBg = Color3.fromRGB(20, 60, 25),
+        ProgressBar = Color3.fromRGB(0, 255, 100),
+        TitleColor = Color3.fromRGB(200, 255, 200),
+        DescriptionColor = Color3.fromRGB(150, 230, 180),
+        StudioBlurColor = Color3.fromRGB(5, 25, 10)
+    },
+    ["sunset"] = {
+        BackgroundColor = Color3.fromRGB(60, 30, 10),
+        ShadowColor = Color3.fromRGB(30, 15, 5),
+        BorderColor = Color3.fromRGB(120, 60, 20),
+        ProgressBarBg = Color3.fromRGB(80, 40, 15),
+        ProgressBar = Color3.fromRGB(255, 150, 0),
+        TitleColor = Color3.fromRGB(255, 230, 200),
+        DescriptionColor = Color3.fromRGB(255, 200, 150),
+        StudioBlurColor = Color3.fromRGB(40, 20, 5)
+    },
+    ["ocean"] = {
+        BackgroundColor = Color3.fromRGB(10, 30, 50),
+        ShadowColor = Color3.fromRGB(5, 15, 25),
+        BorderColor = Color3.fromRGB(20, 60, 100),
+        ProgressBarBg = Color3.fromRGB(15, 40, 70),
+        ProgressBar = Color3.fromRGB(0, 200, 255),
+        TitleColor = Color3.fromRGB(200, 230, 255),
+        DescriptionColor = Color3.fromRGB(150, 200, 230),
+        StudioBlurColor = Color3.fromRGB(5, 20, 35)
     }
 }
 
--- Вспомогательные функции
 local function CreateBlurBackground(parent, theme)
-    if RunService:IsStudio() then
+    if game:GetService("RunService"):IsStudio() then
         local BlurFrame = Instance.new("Frame")
         BlurFrame.Size = UDim2.new(1, 40, 1, 40)
         BlurFrame.Position = UDim2.new(-0.07, 0, -0.07, 0)
         BlurFrame.BackgroundColor3 = theme.StudioBlurColor
         BlurFrame.BackgroundTransparency = 0.15
         BlurFrame.ZIndex = -1
+
         local Corner = Instance.new("UICorner")
         Corner.CornerRadius = UDim.new(0, 12)
         Corner.Parent = BlurFrame
+
         return BlurFrame
     else
         local BlurEffect = Instance.new("BlurEffect")
         BlurEffect.Size = 8
         BlurEffect.Name = "NotificationBlur"
+
         return BlurEffect
     end
 end
@@ -88,7 +146,6 @@ local function Shadow2px(theme)
     return NewImage
 end
 
--- Настройки анимации
 local Padding = 12
 local DescriptionPadding = 12
 local InstructionObjects = {}
@@ -98,8 +155,9 @@ local TweenDirection = Enum.EasingDirection.Out
 local LastTick = tick()
 
 local function CalculateBounds(TableOfObjects)
+    local TableOfObjects = typeof(TableOfObjects) == "table" and TableOfObjects or {}
     local Y = 0
-    for _, Object in next, TableOfObjects or {} do
+    for _, Object in next, TableOfObjects do
         if Object:IsA("GuiObject") then
             Y += Object.AbsoluteSize.Y
         end
@@ -107,11 +165,15 @@ local function CalculateBounds(TableOfObjects)
     return Y
 end
 
+local CachedObjects = {}
+
 local function Update()
     local DeltaTime = tick() - LastTick
     local PreviousObjects = {}
+
     for i, ObjectData in ipairs(InstructionObjects) do
         local MainFrame, Delta, Done = ObjectData[1], ObjectData[2], ObjectData[3]
+
         if not Done then
             if Delta < TweenTime then
                 ObjectData[2] = math.clamp(Delta + DeltaTime, 0, TweenTime)
@@ -120,8 +182,10 @@ local function Update()
                 ObjectData[3] = true
             end
         end
+
         local NewValue = TweenService:GetValue(Delta / TweenTime, TweenStyle, TweenDirection)
         local CurrentPos = MainFrame.Position
+
         local TotalHeight = 0
         for j = 1, i - 1 do
             local previousFrame = InstructionObjects[j][1]
@@ -129,16 +193,18 @@ local function Update()
                 TotalHeight += previousFrame.AbsoluteSize.Y + Padding
             end
         end
+
         local TargetPos = UDim2.new(0, 0, 0, TotalHeight)
         MainFrame.Position = CurrentPos:Lerp(TargetPos, NewValue)
         table.insert(PreviousObjects, MainFrame)
     end
+
+    CachedObjects = PreviousObjects
     LastTick = tick()
 end
 
 RunService:BindToRenderStep("UpdateList", 0, Update)
 
--- Настройки текста
 local TitleSettings = {
     Font = Enum.Font.GothamSemibold,
     Size = 15
@@ -176,7 +242,6 @@ local function DescriptionLabel(Text, theme)
     return label
 end
 
--- Анимация исчезновения
 local PropertyTweenOut = {
     Text = "TextTransparency",
     Fram = "BackgroundTransparency",
@@ -209,25 +274,34 @@ end
 local function FadeOutAfter(MainFrame, Seconds, ProgressBar)
     local StartTime = tick()
     local EndTime = StartTime + Seconds
+    
+    -- Update progress bar in real-time
     local connection
     connection = RunService.Heartbeat:Connect(function()
         if not MainFrame or not MainFrame.Parent then
             connection:Disconnect()
             return
         end
+        
         local CurrentTime = tick()
         local Elapsed = CurrentTime - StartTime
+        local Remaining = math.max(0, EndTime - CurrentTime)
         local Progress = math.min(1, Elapsed / Seconds)
+        
         if ProgressBar then
             ProgressBar.Size = UDim2.new(1 - Progress, 0, 0, 3)
-            local hue = 0.3 * (1 - Progress)
+            -- Progress bar color changes based on remaining time
+            local hue = 0.3 * (1 - Progress) -- Green to red transition
             ProgressBar.BackgroundColor3 = Color3.fromHSV(hue, 0.8, 0.9)
         end
+        
         if CurrentTime >= EndTime then
             connection:Disconnect()
         end
     end)
+    
     wait(Seconds)
+
     FadeProperty(MainFrame)
     if ProgressBar then
         FadeProperty(ProgressBar)
@@ -237,12 +311,16 @@ local function FadeOutAfter(MainFrame, Seconds, ProgressBar)
             FadeProperty(child)
         end
     end
+
     wait(0.3)
+
     local index = FindIndexByDependency(InstructionObjects, MainFrame)
     if index then
         table.remove(InstructionObjects, index)
     end
+
     ResetObjects()
+
     delay(0.1, function()
         if connection then
             connection:Disconnect()
@@ -253,44 +331,27 @@ local function FadeOutAfter(MainFrame, Seconds, ProgressBar)
     end)
 end
 
--- Создание иконки с использованием Lucide
-local function CreateLucideIcon(iconName, theme, themed)
-    if not Lucide then
-        warn("Библиотека Lucide не загружена. Иконка не будет отображена.")
-        return nil
-    end
-
-    local icon = Lucide.Create(iconName)
-    if not icon then
-        warn("Не удалось создать иконку: " .. tostring(iconName))
-        return nil
-    end
-
-    icon.Size = UDim2.new(0, 20, 0, 20)
-    icon.ImageColor3 = themed and theme.IconColor or Color3.fromRGB(255, 255, 255)
-    icon.BackgroundTransparency = 1
-    return icon
-end
-
--- Основная функция уведомления
-local Notify = {
-    Themes = Themes,
+return {
+    Themes = Themes, -- Экспортируем темы для внешнего использования
+    
     Notify = function(Properties)
         local Properties = typeof(Properties) == "table" and Properties or {}
         local Title = Properties.Title or ""
         local Description = Properties.Description or ""
         local Duration = Properties.Duration or 5
         local ThemeName = Properties.Theme or "dark"
-        local Icon = Properties.Icon or nil
-        local IconThemed = Properties.IconThemed ~= nil and Properties.IconThemed or true
-
+        
+        -- Получаем выбранную тему или используем dark по умолчанию
         local theme = Themes[ThemeName] or Themes.dark
+
         if Title == "" and Description == "" then return end
 
         local totalHeight = 0
+
         if Title ~= "" then
             totalHeight += 28
         end
+
         if Description ~= "" then
             local textSize = TextService:GetTextSize(
                 Description,
@@ -300,7 +361,8 @@ local Notify = {
             )
             totalHeight += textSize.Y + 10
         end
-        totalHeight = math.max(totalHeight, 40) + 16 + 6
+
+        totalHeight = math.max(totalHeight, 40) + 16 + 6 -- Added 6 pixels for progress bar
 
         local MainFrame = Instance.new("Frame")
         MainFrame.BackgroundTransparency = 1
@@ -332,7 +394,7 @@ local Notify = {
         Border.ZIndex = 2
         Border.Parent = NotificationContainer
 
-        -- Progress Bar
+        -- Progress Bar (Timer Line)
         local ProgressBarContainer = Instance.new("Frame")
         ProgressBarContainer.Size = UDim2.new(1, -16, 0, 3)
         ProgressBarContainer.Position = UDim2.new(0, 8, 1, -8)
@@ -357,44 +419,32 @@ local Notify = {
         ProgressBarInnerCorner.CornerRadius = UDim.new(1, 0)
         ProgressBarInnerCorner.Parent = ProgressBar
 
-        -- Icon
         local contentPosition = 8
-        if Icon then
-            local icon = CreateLucideIcon(Icon, theme, IconThemed)
-            if icon then
-                icon.Position = UDim2.new(0, 12, 0, 12)
-                icon.ZIndex = 3
-                icon.Parent = NotificationContainer
-                contentPosition = 12 + 20 + 8
-            end
-        end
 
-        -- Title
         if Title ~= "" then
             local titleLabel = TitleLabel(Title, theme)
-            titleLabel.Size = UDim2.new(1, -16 - (Icon and 32 or 0), 0, 24)
-            titleLabel.Position = UDim2.new(0, Icon and 40 or 8, 0, contentPosition)
+            titleLabel.Size = UDim2.new(1, -16, 0, 24)
+            titleLabel.Position = UDim2.new(0, 8, 0, contentPosition)
             titleLabel.TextTruncate = Enum.TextTruncate.AtEnd
             titleLabel.ZIndex = 3
             titleLabel.Parent = NotificationContainer
             contentPosition += 24 + 4
         end
 
-        -- Description
         if Description ~= "" then
             local descLabel = DescriptionLabel(Description, theme)
             descLabel.TextWrapped = true
-            descLabel.Size = UDim2.new(1, -16 - (Icon and 32 or 0), 1, -contentPosition - 8 - 6)
-            descLabel.Position = UDim2.new(0, Icon and 40 or 8, 0, contentPosition)
+            descLabel.Size = UDim2.new(1, -16, 1, -contentPosition - 8 - 6) -- Adjusted for progress bar
+            descLabel.Position = UDim2.new(0, 8, 0, contentPosition)
             descLabel.TextYAlignment = Title ~= "" and Enum.TextYAlignment.Top or Enum.TextYAlignment.Center
             descLabel.ZIndex = 3
             descLabel.Parent = NotificationContainer
         end
 
         table.insert(InstructionObjects, {MainFrame, 0, false})
-        coroutine.wrap(FadeOutAfter)(MainFrame, Duration, ProgressBar)
-        return MainFrame
-    end
-}
 
-return Notify
+        coroutine.wrap(FadeOutAfter)(MainFrame, Duration, ProgressBar)
+
+        return MainFrame
+    end,
+}
