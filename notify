@@ -452,5 +452,3 @@ return {
         return MainFrame
     end,
 }
-
-print("yellownotify initialized! by yellow | for yellowhub | Avaiable on ScriptBlox!")
