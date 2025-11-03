@@ -1,1 +1,351 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>yellowhub - Terms of Service</title>
+    <link rel="icon" href="https://github.com/yellowhubdev/yellowhubdev.github.io/blob/main/logo.png?raw=true" type="image/png">
+    <style>
+        :root {
+            --background-primary: #36393f;
+            --background-secondary: #2f3136;
+            --text-primary: #dcddde;
+            --text-secondary: #72767d;
+            --accent: #ffe600;
+            --font-main: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+            --notification-bg: #202225;
+            --notification-border: #3f4147;
+            --notification-text: #dcddde;
+        }
 
+        body {
+            background-color: var(--background-primary);
+            color: var(--text-primary);
+            font-family: var(--font-main);
+            margin: 0;
+            padding: 0;
+            line-height: 1.6;
+            scroll-behavior: smooth;
+        }
+
+        .header {
+            background-color: var(--background-secondary);
+            padding: 20px 40px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid rgba(0, 0, 0, 0.3);
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .logo img {
+            height: 32px;
+        }
+
+        .logo span {
+            color: var(--accent);
+            font-size: 24px;
+            font-weight: bold;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 30px;
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        .nav-links a {
+            color: var(--text-primary);
+            text-decoration: none;
+            font-size: 14px;
+        }
+
+        .nav-links a:hover {
+            color: white;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 40px 20px;
+        }
+
+        h1 {
+            font-size: 48px;
+            font-weight: 800;
+            margin-bottom: 20px;
+            text-align: center;
+            color: var(--accent);
+        }
+
+        .dates {
+            text-align: center;
+            margin-bottom: 40px;
+            color: var(--text-secondary);
+        }
+
+        .toc {
+            max-width: 600px;
+            margin: 0 auto 60px;
+        }
+
+        .toc ul {
+            list-style: none;
+            padding: 0;
+        }
+
+        .toc li {
+            margin-bottom: 15px;
+            color: var(--accent);
+            font-size: 18px;
+        }
+
+        .toc li a {
+            color: inherit;
+            text-decoration: none;
+            transition: color 0.2s;
+        }
+
+        .toc li a:hover {
+            text-decoration: underline;
+        }
+
+        .content {
+            max-width: 800px;
+            margin: 0 auto;
+            color: var(--text-primary);
+        }
+
+        .content h2 {
+            font-size: 28px;
+            margin-bottom: 20px;
+            color: white;
+        }
+
+        .content p {
+            margin-bottom: 20px;
+        }
+
+        .content a {
+            color: var(--accent);
+            text-decoration: none;
+        }
+
+        .content a:hover {
+            text-decoration: underline;
+        }
+
+        .disclaimer {
+            border-left: 4px solid var(--accent);
+            padding-left: 20px;
+            margin: 20px 0;
+            background-color: rgba(255, 230, 0, 0.05);
+            padding: 15px;
+            border-radius: 4px;
+        }
+
+        .warning {
+            color: #ff6b6b;
+            font-weight: bold;
+        }
+
+        /* Notification System */
+        .notification-container {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            max-width: 400px;
+            z-index: 1000;
+        }
+
+        .notification {
+            background-color: var(--notification-bg);
+            border: 1px solid var(--notification-border);
+            border-radius: 8px;
+            padding: 16px;
+            margin-bottom: 10px;
+            color: var(--notification-text);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+            animation: slideIn 0.3s ease-out;
+        }
+
+        .notification-header {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 8px;
+        }
+
+        .notification-icon {
+            width: 20px;
+            height: 20px;
+            background-color: var(--accent);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: black;
+            font-weight: bold;
+        }
+
+        .notification-title {
+            font-weight: 600;
+            font-size: 16px;
+        }
+
+        .notification-message {
+            font-size: 14px;
+            line-height: 1.4;
+        }
+
+        @keyframes slideIn {
+            from {
+                transform: translateX(100%);
+                opacity: 0;
+            }
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header class="header">
+        <div class="logo">
+            <img src="https://github.com/yellowhubdev/yellowhubdev.github.io/blob/main/logo.png?raw=true" alt="yellowhub logo">
+            <span>yellowhub</span>
+        </div>
+        <nav>
+            <ul class="nav-links">
+                <li><a href="https://yellowhubdev.github.io">Home</a></li>
+                <li><a href="https://dsc.gg/yellowhub">Discord</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <div class="container">
+        <h1>TERMS OF SERVICE</h1>
+        <div class="dates">
+            <p>Effective: November 3, 2025</p>
+            <p>Last Updated: November 3, 2025</p>
+        </div>
+
+        <div class="toc">
+            <ul>
+                <li><a href="#disclaimer">1. Disclaimer</a></li>
+                <li><a href="#copyright">2. Copyright Protection</a></li>
+                <li><a href="#verification">3. Verification</a></li>
+                <li><a href="#risks">4. Risks and Responsibilities</a></li>
+                <li><a href="#termination">5. Termination</a></li>
+                <li><a href="#as-is">6. Services "AS IS"</a></li>
+            </ul>
+        </div>
+
+        <div class="content">
+            <section id="disclaimer">
+                <h2>1. Disclaimer</h2>
+                <div class="disclaimer">
+                    <p><strong>yellowhub is not affiliated, associated, authorized, endorsed by, or in any way officially connected with Roblox Corporation.</strong></p>
+                    <p class="warning">Our scripts are designed for educational and testing purposes only. Using them in live games may violate Roblox's Terms of Service and result in account bans or restrictions.</p>
+                    <p>By using our scripts, you acknowledge and agree that:</p>
+                    <ul>
+                        <li>You use our scripts <strong>at your own risk</strong>.</li>
+                        <li>yellowhub is <strong>not responsible</strong> for any bans, account restrictions, or other penalties imposed by Roblox or any game.</li>
+                        <li>You are solely responsible for complying with Roblox's Terms of Service and the rules of individual games.</li>
+                    </ul>
+                </div>
+            </section>
+
+            <section id="copyright">
+                <h2>2. Copyright Protection</h2>
+                <p>All source code, obfuscated code, and any other materials related to yellowhub are the exclusive property of <strong>.yellow team</strong>.</p>
+                <p>You are strictly prohibited from:</p>
+                <ul>
+                    <li>Unauthorized distribution of yellowhub's source code or obfuscated code.</li>
+                    <li>Claiming yellowhub or its components as your own work.</li>
+                    <li>Modifying and redistributing yellowhub without explicit permission.</li>
+                </ul>
+                <p>We reserve the right to take legal action against any unauthorized use, distribution, or claim of ownership of yellowhub's intellectual property.</p>
+            </section>
+
+            <section id="verification">
+                <h2>3. Verification</h2>
+                <p>As part of the verification process, we may request additional information from you to confirm your identity or eligibility to use our services.</p>
+                <p>We reserve the right to store the information you provide for up to 30 days. In some cases, we may retain this information for a longer period if necessary for security, legal compliance, or other legitimate purposes.</p>
+            </section>
+
+            <section id="risks">
+                <h2>4. Risks and Responsibilities</h2>
+                <p class="warning">Using yellowhub scripts in Roblox games carries significant risks, including but not limited to:</p>
+                <ul>
+                    <li><strong>Account bans or restrictions</strong> by Roblox.</li>
+                    <li><strong>Loss of in-game progress or items</strong> due to anti-cheat systems.</li>
+                    <li><strong>Legal consequences</strong> if scripts are used to violate laws or Roblox's Terms of Service.</li>
+                </ul>
+                <p>You agree that yellowhub is not liable for any consequences arising from the use of our scripts. You are fully responsible for your actions.</p>
+            </section>
+
+            <section id="termination">
+                <h2>5. Termination</h2>
+                <p>We reserve the right to restrict or terminate your access to yellowhub at any time, for any reason, including but not limited to:</p>
+                <ul>
+                    <li>Violation of these Terms of Service.</li>
+                    <li>Decision by yellowhub Staff.</li>
+                </ul>
+            </section>
+
+            <section id="as-is">
+                <h2>6. Services "AS IS"</h2>
+                <p>Our services are provided "as is." We do not guarantee that they will be error-free, secure, or meet your expectations. Use at your own risk.</p>
+            </section>
+        </div>
+    </div>
+
+    <div class="notification-container" id="notificationContainer"></div>
+
+    <script>
+        // Smooth scrolling for TOC links
+        document.querySelectorAll('.toc a').forEach(anchor => {
+            anchor.addEventListener('click', function(e) {
+                e.preventDefault();
+                const targetId = this.getAttribute('href');
+                const targetElement = document.querySelector(targetId);
+                targetElement.scrollIntoView({
+                    behavior: 'smooth'
+                });
+            });
+        });
+
+        // Notification system
+        function showNotification(title, message, icon = '!') {
+            const notificationContainer = document.getElementById('notificationContainer');
+            const notification = document.createElement('div');
+            notification.className = 'notification';
+            notification.innerHTML = `
+                <div class="notification-header">
+                    <div class="notification-icon">${icon}</div>
+                    <div class="notification-title">${title}</div>
+                </div>
+                <div class="notification-message">${message}</div>
+            `;
+            notificationContainer.appendChild(notification);
+
+            // Auto-remove after 5 seconds
+            setTimeout(() => {
+                notification.style.animation = 'slideIn 0.3s ease-out reverse';
+                setTimeout(() => {
+                    notification.remove();
+                }, 300);
+            }, 5000);
+        }
+    </script>
+</body>
+</html>
