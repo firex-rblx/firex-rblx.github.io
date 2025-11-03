@@ -1,9 +1,18 @@
+
+--[[
+
+    yellownotify v1.0.1
+    by yellow | for yellowhub
+    https://dsc.gg/yellowhub/
+
+]]
+
 local TweenService = game:GetService("TweenService")
 local RunService = game:GetService("RunService")
 local TextService = game:GetService("TextService")
 local Player = game:GetService("Players").LocalPlayer
 local NotifGui = Instance.new("ScreenGui")
-NotifGui.Name = "FireXNotify"
+NotifGui.Name = "yellownotify"
 NotifGui.Parent = RunService:IsStudio() and Player.PlayerGui or game:GetService("CoreGui")
 local Container = Instance.new("Frame")
 Container.Name = "Container"
@@ -12,7 +21,6 @@ Container.Size = UDim2.new(0, 300, 0.5, 0)
 Container.BackgroundTransparency = 1
 Container.Parent = NotifGui
 
--- Темы
 local Themes = {
     ["dark"] = {
         BackgroundColor = Color3.fromRGB(25, 25, 25),
@@ -275,7 +283,6 @@ local function FadeOutAfter(MainFrame, Seconds, ProgressBar)
     local StartTime = tick()
     local EndTime = StartTime + Seconds
     
-    -- Update progress bar in real-time
     local connection
     connection = RunService.Heartbeat:Connect(function()
         if not MainFrame or not MainFrame.Parent then
@@ -290,8 +297,7 @@ local function FadeOutAfter(MainFrame, Seconds, ProgressBar)
         
         if ProgressBar then
             ProgressBar.Size = UDim2.new(1 - Progress, 0, 0, 3)
-            -- Progress bar color changes based on remaining time
-            local hue = 0.3 * (1 - Progress) -- Green to red transition
+            local hue = 0.3 * (1 - Progress)
             ProgressBar.BackgroundColor3 = Color3.fromHSV(hue, 0.8, 0.9)
         end
         
@@ -332,7 +338,7 @@ local function FadeOutAfter(MainFrame, Seconds, ProgressBar)
 end
 
 return {
-    Themes = Themes, -- Экспортируем темы для внешнего использования
+    Themes = Themes,
     
     Notify = function(Properties)
         local Properties = typeof(Properties) == "table" and Properties or {}
@@ -341,7 +347,6 @@ return {
         local Duration = Properties.Duration or 5
         local ThemeName = Properties.Theme or "dark"
         
-        -- Получаем выбранную тему или используем dark по умолчанию
         local theme = Themes[ThemeName] or Themes.dark
 
         if Title == "" and Description == "" then return end
@@ -362,7 +367,7 @@ return {
             totalHeight += textSize.Y + 10
         end
 
-        totalHeight = math.max(totalHeight, 40) + 16 + 6 -- Added 6 pixels for progress bar
+        totalHeight = math.max(totalHeight, 40) + 16 + 6
 
         local MainFrame = Instance.new("Frame")
         MainFrame.BackgroundTransparency = 1
@@ -394,7 +399,6 @@ return {
         Border.ZIndex = 2
         Border.Parent = NotificationContainer
 
-        -- Progress Bar (Timer Line)
         local ProgressBarContainer = Instance.new("Frame")
         ProgressBarContainer.Size = UDim2.new(1, -16, 0, 3)
         ProgressBarContainer.Position = UDim2.new(0, 8, 1, -8)
@@ -434,7 +438,7 @@ return {
         if Description ~= "" then
             local descLabel = DescriptionLabel(Description, theme)
             descLabel.TextWrapped = true
-            descLabel.Size = UDim2.new(1, -16, 1, -contentPosition - 8 - 6) -- Adjusted for progress bar
+            descLabel.Size = UDim2.new(1, -16, 1, -contentPosition - 8 - 6)
             descLabel.Position = UDim2.new(0, 8, 0, contentPosition)
             descLabel.TextYAlignment = Title ~= "" and Enum.TextYAlignment.Top or Enum.TextYAlignment.Center
             descLabel.ZIndex = 3
@@ -448,3 +452,5 @@ return {
         return MainFrame
     end,
 }
+
+print("yellownotify initialized! by yellow | for yellowhub | Avaiable on ScriptBlox!")
